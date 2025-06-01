@@ -45,7 +45,7 @@ let selectedDay = null;
 let simulationDone = false;
 
 function randomUniform(min, max) {
-  const u = Math.random(); // u ∈ [0,1)
+  const u = Math.random();
   const x = min + (max - min) * u;
   return x;
 }
