@@ -34,7 +34,7 @@ const etapas = [
   { label: 'r5', nombre: 'R5', min: 1050, max: 1250 },
   { label: 'r6', nombre: 'R6', min: 1250, max: 1400 },
   { label: 'r7', nombre: 'R7', min: 1400, max: 1500 },
-  { label: 'r8', nombre: 'R8', min: 1500, max: 1600 }
+  { label: 'r8', nombre: 'R8', min: 1500, max: 1601 } // max 1600 inclusive
 ];
 
 let currentMonthIndex = 0;
@@ -45,9 +45,7 @@ let selectedDay = null;
 let simulationDone = false;
 
 function randomUniform(min, max) {
-  const u = Math.random();
-  const x = min + (max - min) * u;
-  return x;
+  return min + Math.random() * (max - min);
 }
 
 function simulateMonth(year, month) {
@@ -58,6 +56,7 @@ function simulateMonth(year, month) {
   for (let i = 1; i <= daysInMonth; i++) {
     const Tmax = randomUniform(minTemp, maxTemp);
     const Tmin = randomUniform(minTemp, Tmax);
+    // Aquí el cálculo original como lo usabas:
     const gddDiarioCalc = ((Tmax - Tmin) / 2) * Tbase;
 
     let gddDiario = null;
@@ -68,16 +67,13 @@ function simulateMonth(year, month) {
       gddAcum = gddTotal + gddDiarioCalc;
       etapa = etapas.find(e => gddAcum >= e.min && gddAcum < e.max);
 
-      if (etapa && etapa.label === 'r8') {
-        reachedR8 = true;
-        gddDiario = gddDiarioCalc;
-        gddAcum = gddTotal + gddDiario;
-        gddTotal = gddAcum;
-      } else {
-        gddDiario = gddDiarioCalc;
-        gddTotal += gddDiarioCalc;
+      if (etapa && etapa.label === 'r8' && gddAcum >= 1600) {
+        reachedR8 = true; // Este es el día que alcanza o pasa 1600
       }
+      gddDiario = gddDiarioCalc;
+      gddTotal = gddAcum;
     } else {
+      // Ya pasó 1600, no sumar más GDD diario
       gddAcum = gddTotal;
       etapa = etapas.find(e => gddAcum >= e.min && gddAcum < e.max);
       gddDiario = null;
@@ -101,8 +97,10 @@ function simular() {
   reachedR8 = false;
   simulationDone = true;
   selectedDay = null;
+
   gddDailyEl.textContent = 'Seleccione un día';
   gddAcumEl.textContent = 'Seleccione un día';
+  estadoCultivoEl.textContent = 'Seleccione un día';
 
   for (const m of monthsToSimulate) {
     const data = simulateMonth(m.year, m.month);
@@ -127,30 +125,84 @@ function renderCalendar() {
   const daysInMonth = new Date(currentMonth.year, currentMonth.month, 0).getDate();
 
   if (!simulationDone) {
+    // Antes de simular, mostrar días normales
     for (let i = 1; i <= daysInMonth; i++) {
       const dayEl = document.createElement('div');
+      dayEl.classList.add('day-box');
       dayEl.textContent = i;
-      dayEl.classList.add('vn');
       calendarEl.appendChild(dayEl);
     }
     return;
   }
 
+  // BUSCAR EL PRIMER DÍA QUE ALCANZA O SUPERA 1600 EN TODO allData
+  let r8MonthIndex = -1;
+  let r8DayIndex = -1;
+  outerLoop:
+  for (let mIndex = 0; mIndex < allData.length; mIndex++) {
+    const monthData = allData[mIndex].data;
+    for (let dIndex = 0; dIndex < monthData.length; dIndex++) {
+      if (monthData[dIndex].gddAcum >= 1600) {
+        r8MonthIndex = mIndex;
+        r8DayIndex = dIndex;
+        break outerLoop;
+      }
+    }
+  }
+
+  // Obtener datos del mes actual
   const monthData = allData[currentMonthIndex].data;
 
-  monthData.forEach((dayData, i) => {
+  for (let i = 0; i < daysInMonth; i++) {
+    const dayData = monthData[i];
     const dayEl = document.createElement('div');
-    dayEl.classList.add(dayData.etapa);
+    dayEl.classList.add('day-box');
 
-    const dayText = document.createElement('span');
-    dayText.textContent = dayData.gddDiario === null ? '-' : dayData.day;
-    dayEl.appendChild(dayText);
+    // Determinar si este día debe estar deshabilitado:
+    //  - Si está en un mes posterior al mes donde se alcanzó R8
+    //  - O si está en el mismo mes y es posterior al día R8
+    let isDisabled = false;
+    let isR8Day = false;
 
-    if (dayData.etapa !== 'vn') {
+    if (r8MonthIndex !== -1) {
+      if (currentMonthIndex > r8MonthIndex) {
+        // Mes posterior al R8 -> todos deshabilitados
+        isDisabled = true;
+      } else if (currentMonthIndex === r8MonthIndex) {
+        if (i > r8DayIndex) {
+          isDisabled = true;
+        } else if (i === r8DayIndex) {
+          isR8Day = true;
+        }
+      }
+      // meses anteriores a r8MonthIndex no están deshabilitados
+    }
+
+    if (isDisabled) {
+      dayEl.classList.add('disabled');
+      dayEl.textContent = dayData.day;
+      calendarEl.appendChild(dayEl);
+      continue;
+    }
+
+    if (isR8Day) {
+      dayEl.classList.add('r8');
+      dayEl.textContent = dayData.day;
+
       const rLabel = document.createElement('div');
       rLabel.classList.add('r-label');
-      rLabel.textContent = dayData.etapa.toUpperCase();
+      rLabel.textContent = 'R8';
       dayEl.appendChild(rLabel);
+    } else {
+      dayEl.classList.add(dayData.etapa);
+      dayEl.textContent = dayData.day;
+
+      if (dayData.etapa !== 'vn') {
+        const rLabel = document.createElement('div');
+        rLabel.classList.add('r-label');
+        rLabel.textContent = dayData.etapa.toUpperCase();
+        dayEl.appendChild(rLabel);
+      }
     }
 
     if (selectedDay === i) {
@@ -158,7 +210,7 @@ function renderCalendar() {
     }
 
     dayEl.addEventListener('click', () => {
-      if (!simulationDone) return;
+      if (!simulationDone || isDisabled) return;
 
       selectedDay = i;
       updateInfo(dayData);
@@ -166,7 +218,7 @@ function renderCalendar() {
     });
 
     calendarEl.appendChild(dayEl);
-  });
+  }
 }
 
 function updateInfo(dayData) {
@@ -189,7 +241,6 @@ function updateInfo(dayData) {
   estadoCultivoEl.textContent = `${dayData.etapa.toUpperCase()}: ${descripcion}`;
 }
 
-
 btnSimular.addEventListener('click', simular);
 
 btnPrev.addEventListener('click', () => {
@@ -198,6 +249,7 @@ btnPrev.addEventListener('click', () => {
     selectedDay = null;
     gddDailyEl.textContent = 'Seleccione un día';
     gddAcumEl.textContent = 'Seleccione un día';
+    estadoCultivoEl.textContent = 'Seleccione un día';
     renderCalendar();
   }
 });
@@ -208,8 +260,10 @@ btnNext.addEventListener('click', () => {
     selectedDay = null;
     gddDailyEl.textContent = 'Seleccione un día';
     gddAcumEl.textContent = 'Seleccione un día';
+    estadoCultivoEl.textContent = 'Seleccione un día';
     renderCalendar();
   }
 });
 
+// Mostrar calendario sin simular inicialmente
 renderCalendar();
