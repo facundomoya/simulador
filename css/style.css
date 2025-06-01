@@ -1,0 +1,72 @@
+body {
+  background-color: #f8f9fa;
+  font-family: Arial, sans-serif;
+  padding: 50px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  background: white;
+  /* Altura automática, sin scroll */
+  min-height: 540px; /* ajusta si quieres */
+}
+
+.calendar-grid > div {
+  border-radius: 8px;
+  height: 80px;       /* cuadros grandes */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 700;
+  position: relative;
+  font-size: 1.9rem;
+  color: black;
+  user-select: none;
+  transition: background-color 0.3s, color 0.3s;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+/* Para que el texto no se vaya a la siguiente línea al poner el guion */
+.calendar-grid > div .day-text {
+  white-space: nowrap;
+}
+
+/* Etiqueta Rn pequeña arriba derecha */
+.r-label {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  user-select: none;
+  pointer-events: none;
+  color: black;
+}
+
+/* Colores para cada etapa fenológica */
+.vn { background-color: white; color: black; }
+.r1 { background-color: #fff59d; }  /* amarillo */
+.r2 { background-color: #f8bbd0; }  /* rosa */
+.r3 { background-color: #aed581; }  /* verde claro */
+.r4 { background-color: #81d4fa; }  /* celeste */
+.r5 { background-color: #ffcc80; }  /* naranja claro */
+.r6 { background-color: #ce93d8; }  /* lavanda */
+.r7 { background-color: #ef9a9a; }  /* rojo claro */
+.r8 { background-color: #e57373; color: black; } /* rojo más intenso */
+
+/* Borde y cambio para seleccionado */
+.selected {
+  border: 3px solid #222 !important;
+}
+
+/* R8 seleccionado más oscuro */
+.r8.selected {
+  background-color: #a71d2a !important;
+  color: white !important;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulador GDD</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100 h-100 flex-row-reverse">
+      <!-- Calendario a la derecha -->
+      <div class="col-6 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-3" id="navContainer">
+          <button id="btnPrev" class="btn btn-outline-primary">&lt;</button>
+          <h3 id="monthTitle" class="mb-0 text-center flex-grow-1"></h3>
+          <button id="btnNext" class="btn btn-outline-primary">&gt;</button>
+        </div>
+
+        <div id="calendar" class="calendar-grid"></div>
+
+        <button id="btnSimular" class="btn btn-success mt-3">Simular</button>
+      </div>
+
+      <!-- Panel de resultados a la izquierda -->
+      <div class="col-6 d-flex flex-column justify-content-start pe-5" id="infoPanel">
+        <div class="info-box mb-3 p-3 border rounded shadow-sm">
+          <h4>GDD Diario</h4>
+          <p id="gddDaily">Seleccione un día</p>
+        </div>
+        <div class="info-box mb-3 p-3 border rounded shadow-sm">
+          <h4>GDD Acumulado</h4>
+          <p id="gddAcum">Seleccione un día</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/scripts.js"></script>
+</body>
+</html>
