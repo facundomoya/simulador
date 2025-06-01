@@ -3,7 +3,7 @@ const monthTitle = document.getElementById('monthTitle');
 const btnPrev = document.getElementById('btnPrev');
 const btnNext = document.getElementById('btnNext');
 const btnSimular = document.getElementById('btnSimular');
-
+const estadoCultivoEl = document.getElementById('estadoCultivo');
 const gddDailyEl = document.getElementById('gddDaily');
 const gddAcumEl = document.getElementById('gddAcum');
 
@@ -172,7 +172,23 @@ function renderCalendar() {
 function updateInfo(dayData) {
   gddDailyEl.textContent = dayData.gddDiario === null ? '-' : dayData.gddDiario.toFixed(2);
   gddAcumEl.textContent = dayData.gddAcum.toFixed(2);
+
+  const descripciones = {
+    vn: 'Emergencia',
+    r1: 'Inicio de floración',
+    r2: 'Floración plena',
+    r3: 'Formación de vainas',
+    r4: 'Vaina completa',
+    r5: 'Grano iniciando',
+    r6: 'Llenado de granos',
+    r7: 'Madurez fisiológica',
+    r8: 'Madurez de cosecha'
+  };
+
+  const descripcion = descripciones[dayData.etapa] || 'Desconocido';
+  estadoCultivoEl.textContent = `${dayData.etapa.toUpperCase()}: ${descripcion}`;
 }
+
 
 btnSimular.addEventListener('click', simular);
 
