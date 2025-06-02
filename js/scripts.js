@@ -34,7 +34,7 @@ const etapas = [
   { label: 'r5', nombre: 'R5', min: 1050, max: 1250 },
   { label: 'r6', nombre: 'R6', min: 1250, max: 1400 },
   { label: 'r7', nombre: 'R7', min: 1400, max: 1500 },
-  { label: 'r8', nombre: 'R8', min: 1500, max: 1601 } // max 1600 inclusive
+  { label: 'r8', nombre: 'R8', min: 1500, max: 1700 } // max 1600 inclusive
 ];
 
 let currentMonthIndex = 0;
@@ -197,12 +197,11 @@ function renderCalendar() {
       dayEl.classList.add(dayData.etapa);
       dayEl.textContent = dayData.day;
 
-      if (dayData.etapa !== 'vn') {
-        const rLabel = document.createElement('div');
-        rLabel.classList.add('r-label');
-        rLabel.textContent = dayData.etapa.toUpperCase();
-        dayEl.appendChild(rLabel);
-      }
+      const rLabel = document.createElement('div');
+      rLabel.classList.add('r-label');
+      rLabel.textContent = dayData.etapa.toUpperCase();
+      dayEl.appendChild(rLabel);
+
     }
 
     if (selectedDay === i) {

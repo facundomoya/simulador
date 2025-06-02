@@ -50,7 +50,7 @@ body {
 }
 
 /* Colores para cada etapa fenológica */
-.vn { background-color: white; color: black; }
+.vn { background-color: lightslategray; }
 .r1 { background-color: #fff59d; }  /* amarillo */
 .r2 { background-color: #f8bbd0; }  /* rosa */
 .r3 { background-color: #aed581; }  /* verde claro */
