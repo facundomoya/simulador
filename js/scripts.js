@@ -34,7 +34,7 @@ const etapas = [
   { label: 'r5', nombre: 'R5', min: 1050, max: 1250 },
   { label: 'r6', nombre: 'R6', min: 1250, max: 1400 },
   { label: 'r7', nombre: 'R7', min: 1400, max: 1500 },
-  { label: 'r8', nombre: 'R8', min: 1500, max: 1700 } // max 1600 inclusive
+  { label: 'r8', nombre: 'R8', min: 1500, max: 1700 }
 ];
 
 let currentMonthIndex = 0;
@@ -43,48 +43,50 @@ let gddTotal = 0;
 let reachedR8 = false;
 let selectedDay = null;
 let simulationDone = false;
+let startDate = null;
 
 function randomUniform(min, max) {
   return min + Math.random() * (max - min);
 }
 
-function simulateMonth(year, month) {
+function simulateMonth(year, month, monthIndex) {
   const daysInMonth = new Date(year, month, 0).getDate();
   const [minTemp, maxTemp] = tempRanges[month];
   const days = [];
 
-  for (let i = 1; i <= daysInMonth; i++) {
+  for (let i = 0; i < daysInMonth; i++) {
+    const day = i + 1;
     const Tmax = randomUniform(minTemp, maxTemp);
     const Tmin = randomUniform(minTemp, Tmax);
-    // Aquí el cálculo original como lo usabas:
     const gddDiarioCalc = ((Tmax - Tmin) / 2) * Tbase;
 
     let gddDiario = null;
-    let gddAcum;
-    let etapa;
+    let gddAcum = gddTotal;
+    let etapa = etapas.find(e => gddAcum >= e.min && gddAcum < e.max);
 
-    if (!reachedR8) {
+    const isAfterStart =
+      startDate &&
+      (monthIndex > startDate.monthIndex ||
+        (monthIndex === startDate.monthIndex && i >= startDate.dayIndex));
+
+    if (!reachedR8 && isAfterStart) {
       gddAcum = gddTotal + gddDiarioCalc;
       etapa = etapas.find(e => gddAcum >= e.min && gddAcum < e.max);
-
-      if (etapa && etapa.label === 'r8' && gddAcum >= 1600) {
-        reachedR8 = true; // Este es el día que alcanza o pasa 1600
-      }
       gddDiario = gddDiarioCalc;
       gddTotal = gddAcum;
-    } else {
-      // Ya pasó 1600, no sumar más GDD diario
-      gddAcum = gddTotal;
-      etapa = etapas.find(e => gddAcum >= e.min && gddAcum < e.max);
-      gddDiario = null;
+
+      if (etapa?.label === 'r8' && gddAcum >= 1600) {
+        reachedR8 = true;
+      }
     }
 
     days.push({
-      day: i,
+      day,
       gddDiario,
       gddAcum,
       etapa: etapa?.label || 'vn',
-      etapaNombre: etapa?.nombre || 'Vn'
+      etapaNombre: etapa?.nombre || 'Vn',
+      isAfterStart
     });
   }
 
@@ -92,6 +94,14 @@ function simulateMonth(year, month) {
 }
 
 function simular() {
+  if (!startDate) {
+    Swal.fire({
+      title: 'Seleccione un día de siembra primero',
+      icon: 'warning'
+    });
+    return;
+  }
+
   allData = [];
   gddTotal = 0;
   reachedR8 = false;
@@ -102,8 +112,9 @@ function simular() {
   gddAcumEl.textContent = 'Seleccione un día';
   estadoCultivoEl.textContent = 'Seleccione un día';
 
-  for (const m of monthsToSimulate) {
-    const data = simulateMonth(m.year, m.month);
+  for (let i = 0; i < monthsToSimulate.length; i++) {
+    const m = monthsToSimulate[i];
+    const data = simulateMonth(m.year, m.month, i);
     allData.push({ ...m, data });
   }
 
@@ -125,17 +136,33 @@ function renderCalendar() {
   const daysInMonth = new Date(currentMonth.year, currentMonth.month, 0).getDate();
 
   if (!simulationDone) {
-    // Antes de simular, mostrar días normales
     for (let i = 1; i <= daysInMonth; i++) {
       const dayEl = document.createElement('div');
       dayEl.classList.add('day-box');
       dayEl.textContent = i;
+
+      dayEl.addEventListener('click', () => {
+        startDate = {
+          monthIndex: currentMonthIndex,
+          dayIndex: i - 1
+        };
+        renderCalendar();
+      });
+
+      if (
+        startDate &&
+        currentMonthIndex === startDate.monthIndex &&
+        i - 1 === startDate.dayIndex
+      ) {
+        dayEl.classList.add('selected');
+      }
+
       calendarEl.appendChild(dayEl);
     }
     return;
   }
 
-  // BUSCAR EL PRIMER DÍA QUE ALCANZA O SUPERA 1600 EN TODO allData
+  // Buscar primer día que alcanza o supera 1600 GDD
   let r8MonthIndex = -1;
   let r8DayIndex = -1;
   outerLoop:
@@ -150,7 +177,6 @@ function renderCalendar() {
     }
   }
 
-  // Obtener datos del mes actual
   const monthData = allData[currentMonthIndex].data;
 
   for (let i = 0; i < daysInMonth; i++) {
@@ -158,15 +184,16 @@ function renderCalendar() {
     const dayEl = document.createElement('div');
     dayEl.classList.add('day-box');
 
-    // Determinar si este día debe estar deshabilitado:
-    //  - Si está en un mes posterior al mes donde se alcanzó R8
-    //  - O si está en el mismo mes y es posterior al día R8
+    const isBeforeStart =
+      startDate &&
+      (currentMonthIndex < startDate.monthIndex ||
+        (currentMonthIndex === startDate.monthIndex && i < startDate.dayIndex));
+
     let isDisabled = false;
     let isR8Day = false;
 
     if (r8MonthIndex !== -1) {
       if (currentMonthIndex > r8MonthIndex) {
-        // Mes posterior al R8 -> todos deshabilitados
         isDisabled = true;
       } else if (currentMonthIndex === r8MonthIndex) {
         if (i > r8DayIndex) {
@@ -175,10 +202,9 @@ function renderCalendar() {
           isR8Day = true;
         }
       }
-      // meses anteriores a r8MonthIndex no están deshabilitados
     }
 
-    if (isDisabled) {
+    if (isBeforeStart || isDisabled) {
       dayEl.classList.add('disabled');
       dayEl.textContent = dayData.day;
       calendarEl.appendChild(dayEl);
@@ -188,7 +214,6 @@ function renderCalendar() {
     if (isR8Day) {
       dayEl.classList.add('r8');
       dayEl.textContent = dayData.day;
-
       const rLabel = document.createElement('div');
       rLabel.classList.add('r-label');
       rLabel.textContent = 'R8';
@@ -196,12 +221,10 @@ function renderCalendar() {
     } else {
       dayEl.classList.add(dayData.etapa);
       dayEl.textContent = dayData.day;
-
       const rLabel = document.createElement('div');
       rLabel.classList.add('r-label');
       rLabel.textContent = dayData.etapa.toUpperCase();
       dayEl.appendChild(rLabel);
-
     }
 
     if (selectedDay === i) {
@@ -209,8 +232,7 @@ function renderCalendar() {
     }
 
     dayEl.addEventListener('click', () => {
-      if (!simulationDone || isDisabled) return;
-
+      if (!simulationDone || isBeforeStart || isDisabled) return;
       selectedDay = i;
       updateInfo(dayData);
       renderCalendar();
@@ -264,5 +286,4 @@ btnNext.addEventListener('click', () => {
   }
 });
 
-// Mostrar calendario sin simular inicialmente
 renderCalendar();
