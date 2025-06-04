@@ -1,4 +1,4 @@
-let mes = 1;
+let mes = 1; //numero del mes de diciembre a abril
 let etapaActual = "Vn"; // Renombrada para evitar conflicto con la función
 let dm = 0; // Días de monitoreo
 let gdda = 0; // GDD acumulado
@@ -10,7 +10,7 @@ function variablesExogenas() {
       if (mes === 1) {
         let a = 12;
         let b = 23;
-        let pp = 0.32;
+        let pp = 0.32; //precipitaciones
         let x = 24;
         let y = 7;
         let cd = 31;
@@ -55,14 +55,13 @@ function variablesExogenas() {
 
 function monitoreo(x, y, cd, a, b, pp) {
   let d = 1; // Día del mes
-  let fm; // Frecuencia de monitoreo
   while (d <= cd) {
     let temp = normal(x, y); // Cálculo de la distribución normal
-    gdd = temp - 10;
+    gdd = temp - 10; //temperatura
     gdda += gdd; // Acumula gdd a gdda
     let resultado = calcularEtapa(gdda); // Llama a la función para obtener etapa y fm
     if (resultado.etapa !== "Vn") {
-      dm = dm + 1;
+      dm = dm + 1; //dm es dia del monitoreo
       if (dm >= resultado.fm) {
         if (temp >= 35) {
           let u = Math.random(); // Genera número aleatorio entre 0 y 1
@@ -85,13 +84,8 @@ function monitoreo(x, y, cd, a, b, pp) {
 }
 
 function normal(x, y) {
-  let sum = 0;
-  for (let i = 0; i < 12; i++) {
-    let u = Math.random(); // Genera número aleatorio entre 0 y 1
-    sum += u;
-  }
-  let resultado = x * (sum - 6) + y;
-  return resultado;
+  temp = d3.randomNormal(x, y)();
+  return temp;
 }
 
 function calcularEtapa(gdda) {

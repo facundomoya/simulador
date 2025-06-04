@@ -47,8 +47,11 @@ body {
   user-select: none;
   pointer-events: none;
   color: black;
+  background: rgba(255 255 255 / 0.7);
+  padding: 1px 5px;
+  border-radius: 4px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.2);
 }
-
 /* Colores para cada etapa fenológica */
 .vn { background-color: lightslategray; }
 .r1 { background-color: #fff59d; }  /* amarillo */
@@ -81,4 +84,86 @@ body {
 
 .color-fondo-floracion{
     background-color: #FFEB99;
+}
+
+.monitoreo {
+  border: 3px dashed red;
+}
+
+.monitoreo .fa-eye {
+  color: red;
+  font-size: 1rem;
+  position: absolute;
+  top: 5px;
+  right: 6px;
+}
+
+.day-number {
+  position: absolute;
+  bottom: 5px;
+  left: 6px;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.fa-eye {
+  font-size: 1rem;
+  color: red;
+  user-select: none;
+}
+
+.weekday {
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #444;
+  user-select: none;
+}
+
+.inactive {
+  background-color: #eee !important;
+  color: #aaa !important;
+  cursor: default !important;
+  box-shadow: none !important;
+  user-select: none;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.calendar-grid > div {
+  position: relative; /* para posicionar day-number y iconos */
+}
+
+.day-number {
+  position: absolute;
+  bottom: 5px;
+  left: 6px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  user-select: none;
+}
+
+/* Iconos fontawesome en esquina superior derecha */
+.fa-eye, .fa-cloud-showers-heavy {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  font-size: 1.2rem;
+  color: #555;
+  user-select: none;
+}
+
+/* Si un día es seleccionado */
+.selected {
+  border: 3px solid #222 !important;
+}
+
+/* R8 seleccionado más oscuro */
+.r8.selected {
+  background-color: #a71d2a !important;
+  color: white !important;
 }
