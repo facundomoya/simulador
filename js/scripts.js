@@ -97,7 +97,7 @@ function simularDesdeInicio() {
 
     const gdd = parseFloat(dia.gdd);
     gddaAcumulado += gdd;
-    if (gddaAcumulado > 1600) gddaAcumulado = 1600;
+    if (gddaAcumulado > 1600);
 
     const etapaData = calcularEtapa(gddaAcumulado);
     const etapa = etapaData.etapa;
