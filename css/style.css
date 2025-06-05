@@ -86,6 +86,10 @@ body {
     background-color: #FFEB99;
 }
 
+.color-fondo-temperatura{
+    background-color: #D8F3DC;
+}
+
 .monitoreo {
   border: 3px dashed red;
 }

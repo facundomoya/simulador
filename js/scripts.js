@@ -8,13 +8,15 @@ const meses = [
 
 let mesActual = 0;
 let diasData = [];
-let diaInicioSimulacion = null; // día elegido para empezar simulación
-let diaSeleccionado = null;     // día seleccionado para mostrar info
-let simulacionHecha = false;    // indica si ya se simuló para bloquear días
+let diaInicioSimulacion = null;
+let diaSeleccionado = null;
+let simulacionHecha = false;
 
 function normal(x, y) {
   let temp = d3.randomNormal(x, y)();
-  return Math.max(temp, x - y); // Nunca menor que media - desviación
+  temp = Math.max(temp, x - y);    // límite inferior
+  temp = Math.min(temp, x + y);    // límite superior
+  return temp;
 }
 
 
@@ -42,68 +44,82 @@ function calcularEtapa(gdda) {
   return { etapa, fm };
 }
 
-function generarDatosBase() {
+function generarClimaBase() {
   diasData = [];
-  let gddaAcumulado = 0;
-  let dm = 0; // contador monitoreo
   meses.forEach((mesObj, idx) => {
     for (let d = 1; d <= mesObj.dias; d++) {
-      if (gddaAcumulado >= 1600) {
-        diasData.push({
-          mes: idx,
-          dia: d,
-          temp: null,
-          gdd: null,
-          gdda: gddaAcumulado.toFixed(1),
-          viento: null,
-          etapa: null,
-          monitoreo: false,
-          lluvia: false
-        });
-        continue;
-      }
-
       const temp = normal(mesObj.x, mesObj.y);
       const gdd = temp - 10;
-      gddaAcumulado += gdd;
-      if (gddaAcumulado > 1600) gddaAcumulado = 1600;
-
       const u = Math.random();
       const viento = mesObj.a + (mesObj.b - mesObj.a) * u;
-
       const lluvia = Math.random() < mesObj.pp;
-
-      const etapaData = calcularEtapa(gddaAcumulado);
-      const etapa = etapaData.etapa;
-      const fm = etapaData.fm;
-
-      let hacerMonitoreo = false;
-
-      if (etapa !== "vn") {
-        dm++;
-        if (fm && dm >= fm) {
-          if (temp < 35 && viento <= 25 && !lluvia) {
-            hacerMonitoreo = true;
-            dm = 0;
-          }
-        }
-      } else {
-        dm = 0;
-      }
 
       diasData.push({
         mes: idx,
         dia: d,
         temp: temp.toFixed(1),
         gdd: gdd.toFixed(1),
-        gdda: gddaAcumulado.toFixed(1),
         viento: viento.toFixed(1),
-        etapa,
-        monitoreo: hacerMonitoreo,
-        lluvia
+        lluvia,
+        etapa: null,
+        gdda: null,
+        monitoreo: false
       });
     }
   });
+}
+
+function simularDesdeInicio() {
+  let gddaAcumulado = 0;
+  let dm = 0;
+  let inicioEncontrado = false;
+
+  for (let i = 0; i < diasData.length; i++) {
+    const dia = diasData[i];
+
+    if (!inicioEncontrado) {
+      if (dia.mes === diaInicioSimulacion.mes && dia.dia === diaInicioSimulacion.dia) {
+        inicioEncontrado = true;
+      } else {
+        dia.etapa = null;
+        dia.gdda = null;
+        dia.monitoreo = false;
+        continue;
+      }
+    }
+
+    if (gddaAcumulado >= 1600) {
+      dia.etapa = null;
+      dia.gdda = gddaAcumulado.toFixed(1);
+      dia.monitoreo = false;
+      continue;
+    }
+
+    const gdd = parseFloat(dia.gdd);
+    gddaAcumulado += gdd;
+    if (gddaAcumulado > 1600) gddaAcumulado = 1600;
+
+    const etapaData = calcularEtapa(gddaAcumulado);
+    const etapa = etapaData.etapa;
+    const fm = etapaData.fm;
+
+    let hacerMonitoreo = false;
+    if (etapa !== "vn") {
+      dm++;
+      if (fm && dm >= fm) {
+        if (parseFloat(dia.temp) < 35 && parseFloat(dia.viento) <= 25 && !dia.lluvia) {
+          hacerMonitoreo = true;
+          dm = 0;
+        }
+      }
+    } else {
+      dm = 0;
+    }
+
+    dia.gdda = gddaAcumulado.toFixed(1);
+    dia.etapa = etapa;
+    dia.monitoreo = hacerMonitoreo;
+  }
 }
 
 function renderizarCalendario() {
@@ -123,20 +139,12 @@ function renderizarCalendario() {
     calendarDiv.appendChild(emptyDiv);
   }
 
-  // Índices globales
-  const ultimoDiaR8Index = diasData.findIndex(d => d.etapa === "r8");
-  let indiceInicioSimulacionGlobal = -1;
-  if (diaInicioSimulacion) {
-    indiceInicioSimulacionGlobal = diasData.findIndex(d => d.mes === diaInicioSimulacion.mes && d.dia === diaInicioSimulacion.dia);
-  }
-
   for (let dia = 1; dia <= meses[mesActual].dias; dia++) {
     const diaDiv = document.createElement("div");
     const indexDiaGlobal = diasData.findIndex(d => d.mes === mesActual && d.dia === dia);
     const datosDia = diasData[indexDiaGlobal];
 
     if (!simulacionHecha) {
-      // Antes de simular: todos blancos y activos
       diaDiv.textContent = dia;
       diaDiv.style.cursor = "pointer";
       diaDiv.style.backgroundColor = "white";
@@ -157,27 +165,20 @@ function renderizarCalendario() {
       });
 
     } else {
-      // Simulación hecha: bloquea fuera del rango y colorea dentro
-
-      if (indexDiaGlobal < indiceInicioSimulacionGlobal || indexDiaGlobal > ultimoDiaR8Index) {
-        // Días fuera de rango bloqueados
+      if (datosDia.etapa === null) {
         diaDiv.textContent = dia;
         diaDiv.style.opacity = "0.4";
         diaDiv.style.cursor = "default";
         diaDiv.style.color = "gray";
         diaDiv.style.fontSize = "1.9rem";
         diaDiv.className = "";
-
       } else {
-        // Días activos y coloreados
         diaDiv.className = datosDia.etapa;
-
         diaDiv.innerHTML = `
           <span class="day-number">${dia}</span>
           ${datosDia.lluvia ? '<i class="fa-solid fa-cloud-showers-heavy" title="Lluvia"></i>' : ''}
           ${datosDia.monitoreo ? '<i class="fa-solid fa-eye" title="Monitoreo"></i>' : ''}
         `;
-
         diaDiv.style.cursor = "pointer";
 
         if (diaSeleccionado && diaSeleccionado.mes === mesActual && diaSeleccionado.dia === dia) {
@@ -236,8 +237,8 @@ function validarSimulacion() {
 
 document.getElementById("btnSimular").addEventListener("click", () => {
   if (!validarSimulacion()) return;
-
   simulacionHecha = true;
+  simularDesdeInicio();
   diaSeleccionado = diaInicioSimulacion;
   actualizarPanelInfo();
   renderizarCalendario();
@@ -259,6 +260,11 @@ document.getElementById("btnNext").addEventListener("click", () => {
   }
 });
 
-generarDatosBase();
+document.getElementById("btnReset").addEventListener("click", () => {
+  location.reload();
+});
+
+
+generarClimaBase();
 renderizarCalendario();
 actualizarPanelInfo();
