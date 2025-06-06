@@ -38,7 +38,7 @@ const m = Math.floor(Math.random() * 10) + 1;
 //crear el generador con esos parámetros
 const obtenerU = crearGeneradorCongruencialMixto(n0, a, c, m);
 
-//funcion NORMAL
+//distribucion NORMAL
 function normal(x, y) {
   let temp = d3.randomNormal(x, y)();
   temp = Math.max(temp, x - y); // límite inferior
@@ -46,7 +46,7 @@ function normal(x, y) {
   return temp;
 }
 
-//funcion para calcular la etapa del cultivo y el factor de monitoreo (fm) según los GDD acumulados
+//distribucion binomal
 function calcularEtapa(gdda) {
   let etapa, fm;
   if (gdda <= 500) {
@@ -101,7 +101,7 @@ function generarClimaBase() {
     for (let d = 1; d <= mesObj.dias; d++) {
       const temp = normal(mesObj.x, mesObj.y);
       const gdd = temp - 10;
-      const u = obtenerU(); // para viento
+      const u = obtenerU(); // para viento - distribucion uniforme
       const viento = mesObj.a + (mesObj.b - mesObj.a) * u; //calculo del viento
       const lluvia = diasLluviaSet.has(d - 1);
 
