@@ -76,27 +76,14 @@ function calcularEtapa(gdda) {
 function generarClimaBase() {
   diasData = [];
   meses.forEach((mesObj, idx) => {
-    // Número exacto de días lluviosos según probabilidad
-    const numLluvia = Math.round(mesObj.pp * mesObj.dias);
-
-    // Array con índices de días del mes
-    let diasMes = [...Array(mesObj.dias).keys()]; // [0, 1, ..., dias-1]
-
-    // Barajar díasMes para elegir días de lluvia aleatoriamente
-    for (let i = diasMes.length - 1; i > 0; i--) {
-      const j = Math.floor(obtenerU() * (i + 1));
-      [diasMes[i], diasMes[j]] = [diasMes[j], diasMes[i]];
-    }
-
-    // Elegir primeros numLluvia como días lluviosos
-    let diasLluviaSet = new Set(diasMes.slice(0, numLluvia));
-
     for (let d = 1; d <= mesObj.dias; d++) {
       const temp = normal(mesObj.x, mesObj.y);
       const gdd = temp - 10;
-      const u = obtenerU(); // para viento - distribucion uniforme
-      const viento = mesObj.a + (mesObj.b - mesObj.a) * u; //calculo del viento
-      const lluvia = diasLluviaSet.has(d - 1);
+      const uViento = obtenerU();
+      const viento = mesObj.a + (mesObj.b - mesObj.a) * uViento; //distribucion UNIFORME
+      
+      //distribucion BINOMIAL para lluvia
+      const lluvia = obtenerU() <= mesObj.pp;
 
       diasData.push({
         mes: idx,
@@ -112,6 +99,7 @@ function generarClimaBase() {
     }
   });
 }
+
 
 function simularDesdeInicio() {
   let gddaAcumulado = 0;
@@ -173,7 +161,7 @@ function simularDesdeInicio() {
   }
 }
 
-//no va desde aca, todo visual!
+//desde aqui es la renderización del calendario y la parte visual
 
 function renderizarCalendario() {
   const calendarDiv = document.getElementById("calendar");

@@ -64,12 +64,12 @@ function monitoreo(x, y, cd, a, b, pp) {
       dm = dm + 1; //dm es dia del monitoreo
       if (dm >= resultado.fm) {
         if (temp <= 35) {
-          let u = Math.random(); // Genera número aleatorio entre 0 y 1
+          let u = obtenerU(); // Obtiene un número aleatorio entre 0 y 1
           let viento = a + (b - a) * u; // Cálculo de viento
           if (viento <= 25) {
-            u = Math.random(); // Genera número aleatorio entre 0 y 1
+            u = obtenerU(); // Obtiene un número aleatorio entre 0 y 1
             if (u <= pp) {
-              // Aquí agregas tu lógica si es true
+           
             } else {
               dm = 0;
               console.log("Se realiza monitoreo");
