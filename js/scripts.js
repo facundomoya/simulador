@@ -40,7 +40,6 @@ function normal(x, y) {
   return temp;
 }
 
-//distribucion binomal
 function calcularEtapa(gdda) {
   let etapa, fm;
   if (gdda <= 500) {
