@@ -161,7 +161,6 @@ function simularDesdeInicio() {
     if (etapa !== "vn") {
       dm++;
       if (fm && dm >= fm) {
-        // aquí reemplazamos Math.random() por obtenerU()
         if (
           parseFloat(dia.temp) < 35 &&
           parseFloat(dia.viento) <= 25 &&
@@ -180,6 +179,8 @@ function simularDesdeInicio() {
     dia.monitoreo = hacerMonitoreo;
   }
 }
+
+//no va desde aca, todo visual!
 
 function renderizarCalendario() {
   const calendarDiv = document.getElementById("calendar");
