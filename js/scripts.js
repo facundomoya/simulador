@@ -12,13 +12,6 @@ let diaInicioSimulacion = null;
 let diaSeleccionado = null;
 let simulacionHecha = false;
 
-//parámetros para el generador congruencial aditivo
-const semillas = [1, 3, 5, 7];
-const modulo = 16;
-const totalIter = 10000;
-
-let secuenciaU = [];
-let indiceU = 0;
 
 function crearGeneradorCongruencialMixto(n0, a, c, m) {
   let semilla = n0;
@@ -33,7 +26,8 @@ function crearGeneradorCongruencialMixto(n0, a, c, m) {
 const n0 = Math.floor(Math.random() * 10) + 1;  // 1 a 10
 const a = Math.floor(Math.random() * 10) + 1;
 const c = Math.floor(Math.random() * 10) + 1;
-const m = Math.floor(Math.random() * 10) + 1;
+const m = Math.floor(Math.random() * 1000) + 100;  // por ejemplo, entre 100 y 1100
+
 
 //crear el generador con esos parámetros
 const obtenerU = crearGeneradorCongruencialMixto(n0, a, c, m);
