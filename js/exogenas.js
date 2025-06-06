@@ -84,7 +84,9 @@ function monitoreo(x, y, cd, a, b, pp) {
 }
 
 function normal(x, y) {
-  temp = d3.randomNormal(x, y)();
+  let temp = d3.randomNormal(x, y)();
+  temp = Math.max(temp, x - y);    // límite inferior
+  temp = Math.min(temp, x + y);    // límite superior
   return temp;
 }
 
@@ -121,3 +123,7 @@ function calcularEtapa(gdda) {
   }
   return { etapa, fm }; // Devuelve un objeto con etapa y fm
 }
+
+
+//no se realiza monitoreo en la etapa de Vn ni tampooco si la temperatura es mayor a 35
+// ni si el viento es mayor a 25 km/h
