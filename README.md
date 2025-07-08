@@ -103,15 +103,29 @@ Las etapas se determinan según el **GDD acumulado**:
 | R7    | 1401 – 1500          |
 | R8    | > 1500               |
 
+## Estado del proyecto
+Completado ✔️
+
+El simulador está funcional y listo para su uso.
+
+## Descripción de archivos:
+- **css/style.css**: Estilos personalizados para la aplicación
+- **js/scripts.js**: Lógica principal del simulador
+- **js/calculadorIndex.js**: Animaciones para la página de inicio
+- **public/favicon.png**: Icono de la aplicación
+- **public/video.mp4**: Video de fondo para la página principal
+- **index.html**: Landing page de presentación
+- **simulador.html**: Aplicación del simulador principal
 
 ## Equipo de Desarrollo
 
 Este proyecto fue desarrollado por Facundo Moya estudiante de **Ingeniería en Sistemas de Información** de la **Universidad Tecnológica Nacional - Facultad Regional Tucumán (UTN-FRT)** para la materia **Simulación**, en colaboración con **Pelayo S.A.**
 
-## Estado del proyecto
-Completado ✔️
+## Gestión del Código
 
-El simulador está funcional y listo para su uso.
+El desarrollo del proyecto se realizó utilizando un flujo de trabajo simple con Git, donde:
+
+- **Única rama activa**: `master` (ahora llamada `main` en muchos repositorios)
 
 ## Cómo clonar el repositorio
 
