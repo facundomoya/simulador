@@ -23,9 +23,9 @@ Este simulador web permite **modelar y visualizar las etapas fenológicas del cu
 
 ## Tecnologías Utilizadas
 
-- HTML5, CSS3, JavaScript
+- HTML5 + CSS3
+- JavaScript
 - Bootstrap 5.3 → diseño responsive
-- Font Awesome → iconos vectoriales
 - SweetAlert2 → mensajes emergentes modernos
 
 ## Instrucciones de Uso
