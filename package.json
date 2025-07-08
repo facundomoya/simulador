@@ -1,0 +1,16 @@
+{
+  "name": "simulador",
+  "version": "1.0.0",
+  "description": "Este simulador web permite **modelar y visualizar las etapas fenológicas del cultivo de la soja**, específicamente diseñado para **Pelayo S.A.** La herramienta calcula los días correspondientes a cada etapa fenológica (desde **VN** hasta **R8**), considerando variables climáticas generadas aleatoriamente mediante técnicas de simulación estocástica.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^7.9.0",
+    "sweetalert2": "^11.22.2"
+  }
+}
