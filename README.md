@@ -25,8 +25,8 @@ Este simulador web permite **modelar y visualizar las etapas fenológicas del cu
 
 - HTML5 + CSS3
 - JavaScript
-- Bootstrap 5.3 → diseño responsive
-- SweetAlert2 → mensajes emergentes modernos
+- Bootstrap 5.3
+- SweetAlert2
 
 ## Instrucciones de Uso
 
