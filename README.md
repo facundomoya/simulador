@@ -86,7 +86,6 @@ Donde `a` y `b` son valores límites mensuales.
 
 GDD = temperatura_diaria - 10°C
 
-
 ### Etapas Fenológicas del Cultivo
 
 Las etapas se determinan según el **GDD acumulado**:
@@ -116,6 +115,12 @@ El simulador está funcional y listo para su uso.
 - **public/video.mp4**: Video de fondo para la página principal
 - **index.html**: Landing page de presentación
 - **simulador.html**: Aplicación del simulador principal
+ 
+## Acceso al simulador
+Este proyecto está disponible en línea de forma gratuita.
+Podés acceder al simulador desde el siguiente enlace:
+
+[Simulador de etapas fenológicas - Pelayo S.A](https://simulador-pelayosa.netlify.app/)
 
 ## Equipo de Desarrollo
 
@@ -126,6 +131,10 @@ Este proyecto fue desarrollado por Facundo Moya estudiante de **Ingeniería en S
 El desarrollo del proyecto se realizó utilizando un flujo de trabajo simple con Git, donde:
 
 - **Única rama activa**: `master` (ahora llamada `main` en muchos repositorios)
+
+## Compatibilidad y diseño
+
+Este simulador está diseñado para ser responsive y puede utilizarse en distintos dispositivos. No obstante, su visualización y funcionamiento son óptimos en pantallas grandes, donde se muestra el calendario y los paneles informativos con mayor claridad.
 
 ## Cómo clonar el repositorio
 
