@@ -12,31 +12,27 @@ let diaInicioSimulacion = null;
 let diaSeleccionado = null;
 let simulacionHecha = false;
 
-
 function crearGeneradorCongruencialMixto(n0, a, c, m) {
   let semilla = n0;
 
-  return function() {
+  return function () {
     semilla = (a * semilla + c) % m;
     return semilla / m;
   };
 }
 
-//genera aleatoriamente los valores de n0, a, c y m
-const n0 = Math.floor(Math.random() * 10) + 1;  // 1 a 10
+const n0 = Math.floor(Math.random() * 10) + 1;
 const a = Math.floor(Math.random() * 10) + 1;
 const c = Math.floor(Math.random() * 10) + 1;
-const m = Math.floor(Math.random() * 1000) + 100;  // por ejemplo, entre 100 y 1100
+const m = Math.floor(Math.random() * 1000) + 100;
 
-
-//crear el generador con esos parámetros
 const obtenerU = crearGeneradorCongruencialMixto(n0, a, c, m);
 
 //distribucion NORMAL
 function normal(x, y) {
   let temp = d3.randomNormal(x, y)();
-  temp = Math.max(temp, x - y); // límite inferior
-  temp = Math.min(temp, x + y); // límite superior
+  temp = Math.max(temp, x - y);
+  temp = Math.min(temp, x + y);
   return temp;
 }
 
@@ -76,26 +72,22 @@ function calcularEtapa(gdda) {
 function generarClimaBase() {
   diasData = [];
   meses.forEach((mesObj, idx) => {
-    // Número exacto de días lluviosos según probabilidad
     const numLluvia = Math.round(mesObj.pp * mesObj.dias);
 
-    // Array con índices de días del mes
-    let diasMes = [...Array(mesObj.dias).keys()]; // [0, 1, ..., dias-1]
+    let diasMes = [...Array(mesObj.dias).keys()];
 
-    // Barajar díasMes para elegir días de lluvia aleatoriamente
     for (let i = diasMes.length - 1; i > 0; i--) {
       const j = Math.floor(obtenerU() * (i + 1));
       [diasMes[i], diasMes[j]] = [diasMes[j], diasMes[i]];
     }
 
-    // Elegir primeros numLluvia como días lluviosos
     let diasLluviaSet = new Set(diasMes.slice(0, numLluvia));
 
     for (let d = 1; d <= mesObj.dias; d++) {
       const temp = normal(mesObj.x, mesObj.y);
       const gdd = temp - 10;
-      const u = obtenerU(); // para viento - distribucion uniforme
-      const viento = mesObj.a + (mesObj.b - mesObj.a) * u; //calculo del viento
+      const u = obtenerU(); // para viento - distribucion UNIFORME
+      const viento = mesObj.a + (mesObj.b - mesObj.a) * u;
       const lluvia = diasLluviaSet.has(d - 1);
 
       diasData.push({
@@ -173,8 +165,6 @@ function simularDesdeInicio() {
   }
 }
 
-//no va desde aca, todo visual!
-
 function renderizarCalendario() {
   const calendarDiv = document.getElementById("calendar");
   calendarDiv.innerHTML = "";
@@ -234,15 +224,13 @@ function renderizarCalendario() {
         diaDiv.className = datosDia.etapa;
         diaDiv.innerHTML = `
           <span class="day-number">${dia}</span>
-          ${
-            datosDia.lluvia
-              ? '<i class="fa-solid fa-cloud-showers-heavy" title="Lluvia"></i>'
-              : ""
+          ${datosDia.lluvia
+            ? '<i class="fa-solid fa-cloud-showers-heavy" title="Lluvia"></i>'
+            : ""
           }
-          ${
-            datosDia.monitoreo
-              ? '<i class="fa-solid fa-eye" title="Monitoreo"></i>'
-              : ""
+          ${datosDia.monitoreo
+            ? '<i class="fa-solid fa-eye" title="Monitoreo"></i>'
+            : ""
           }
         `;
         diaDiv.style.cursor = "pointer";

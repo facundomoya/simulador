@@ -11,13 +11,12 @@ body {
   border-radius: 6px;
   padding: 10px;
   background: white;
-  /* Altura automática, sin scroll */
-  min-height: 540px; /* ajusta si quieres */
+  min-height: 540px;
 }
 
-.calendar-grid > div {
+.calendar-grid>div {
   border-radius: 8px;
-  height: 80px;       /* cuadros grandes */
+  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,12 +30,10 @@ body {
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
 }
 
-/* Para que el texto no se vaya a la siguiente línea al poner el guion */
-.calendar-grid > div .day-text {
+.calendar-grid>div .day-text {
   white-space: nowrap;
 }
 
-/* Etiqueta Rn pequeña arriba derecha */
 .r-label {
   position: absolute;
   top: 5px;
@@ -49,44 +46,69 @@ body {
   background: rgba(255 255 255 / 0.7);
   padding: 1px 5px;
   border-radius: 4px;
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
-/* Colores para cada etapa fenológica */
-.vn { background-color: lightslategray; }
-.r1 { background-color: #fff59d; }  /* amarillo */
-.r2 { background-color: #f8bbd0; }  /* rosa */
-.r3 { background-color: #aed581; }  /* verde claro */
-.r4 { background-color: #81d4fa; }  /* celeste */
-.r5 { background-color: #ffcc80; }  /* naranja claro */
-.r6 { background-color: #ce93d8; }  /* lavanda */
-.r7 { background-color: #ef9a9a; }  /* rojo claro */
-.r8 { background-color: #e57373; color: black; } /* rojo más intenso */
 
-/* Borde y cambio para seleccionado */
+.vn {
+  background-color: lightslategray;
+}
+
+.r1 {
+  background-color: #fff59d;
+}
+
+.r2 {
+  background-color: #f8bbd0;
+}
+
+.r3 {
+  background-color: #aed581;
+}
+
+.r4 {
+  background-color: #81d4fa;
+}
+
+.r5 {
+  background-color: #ffcc80;
+}
+
+.r6 {
+  background-color: #ce93d8;
+}
+
+.r7 {
+  background-color: #ef9a9a;
+}
+
+.r8 {
+  background-color: #e57373;
+  color: black;
+}
+
 .selected {
   border: 3px solid #222 !important;
 }
 
-/* R8 seleccionado más oscuro */
 .r8.selected {
   background-color: #a71d2a !important;
   color: white !important;
 }
 
-.color-fondo-gdd-diario{
-    background-color: #90EE90;
+.color-fondo-gdd-diario {
+  background-color: #90EE90;
 }
 
-.color-fondo-gdd-acumulado{
-    background-color: #3CB371;
+.color-fondo-gdd-acumulado {
+  background-color: #3CB371;
 }
 
-.color-fondo-floracion{
-    background-color: #FFEB99;
+.color-fondo-floracion {
+  background-color: #FFEB99;
 }
 
-.color-fondo-temperatura{
-    background-color: #D8F3DC;
+.color-fondo-temperatura {
+  background-color: #D8F3DC;
 }
 
 .monitoreo {
@@ -137,8 +159,8 @@ body {
   font-weight: 700;
 }
 
-.calendar-grid > div {
-  position: relative; /* para posicionar day-number y iconos */
+.calendar-grid>div {
+  position: relative;
 }
 
 .day-number {
@@ -150,8 +172,8 @@ body {
   user-select: none;
 }
 
-/* Iconos fontawesome en esquina superior derecha */
-.fa-eye, .fa-cloud-showers-heavy {
+.fa-eye,
+.fa-cloud-showers-heavy {
   position: absolute;
   top: 5px;
   right: 6px;
@@ -160,12 +182,10 @@ body {
   user-select: none;
 }
 
-/* Si un día es seleccionado */
 .selected {
   border: 3px solid #222 !important;
 }
 
-/* R8 seleccionado más oscuro */
 .r8.selected {
   background-color: #a71d2a !important;
   color: white !important;
